@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Appointments')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('appointments')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Appointments','Search, book and monitor dentist appointments.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad">
+                <div class="section-head">
+                    <div><h2>Appointment records</h2><p>Search by appointment number, patient or dentist.</p></div>
+                    <a class="btn btn-primary" th:href="@{/appointments/new}">＋ New Appointment</a>
+                </div>
+                <form class="searchbar" method="get" th:action="@{/appointments}">
+                    <input class="input" name="q" th:value="${q}" placeholder="Appointment number, patient name or dentist">
+                    <button class="btn btn-secondary" type="submit">Search</button>
+                    <a class="btn btn-secondary" th:href="@{/appointments}">Clear</a>
+                </form>
+                <div class="table-wrap" style="margin-top:18px">
+                    <table>
+                        <thead><tr><th>Appointment</th><th>Patient</th><th>Dentist</th><th>Treatment</th><th>Date & Time</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="a : ${appointments}">
+                            <td class="table-title" th:text="${a.appointmentNumber}">APP</td>
+                            <td><div class="table-title" th:text="${a.patient.patientName}">Patient</div><div class="table-sub" th:text="${a.patient.contactNumber}">Phone</div></td>
+                            <td th:text="${a.dentist.dentistName}">Dentist</td>
+                            <td th:text="${a.treatment.treatmentName}">Treatment</td>
+                            <td><div th:text="${a.appointmentDate}">Date</div><div class="table-sub" th:text="${a.appointmentTime}">Time</div></td>
+                            <td><span class="badge" th:classappend="${'badge-' + #strings.toLowerCase(a.status.name())}" th:text="${a.status}">STATUS</span></td>
+                            <td class="actions">
+                                <a class="btn btn-secondary btn-sm" th:href="@{/appointments/{id}(id=${a.id})}">View</a>
+                                <a class="btn btn-secondary btn-sm" th:href="@{/appointments/{id}/edit(id=${a.id})}">Edit</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(appointments)}"><td colspan="7" class="muted">No appointment records found.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>
