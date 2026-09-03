@@ -1,0 +1,10 @@
+target/
+*.log
+.idea/
+.vscode/
+*.iml
+.DS_Store
+.env
+logs/
+*_backup.sql
+clinic-app/src/main/resources/application-local.properties
