@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Treatments')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('treatments')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Treatments & Pricing','Manage treatment fees and consultation charges.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad">
+                <div class="section-head">
+                    <div><h2>Treatment catalogue</h2><p>Pricing is stored in the database and used by billing.</p></div>
+                    <a class="btn btn-primary" th:href="@{/treatments/new}">＋ Add Treatment</a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Treatment</th><th>Treatment Fee</th><th>Consultation Fee</th><th>Duration</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="x : ${treatments}">
+                            <td class="table-title" th:text="${x.treatmentName}">Treatment</td>
+                            <td th:text="'Rs. ' + ${#numbers.formatDecimal(x.treatmentCost,1,'COMMA',2,'POINT')}">Rs.</td>
+                            <td th:text="'Rs. ' + ${#numbers.formatDecimal(x.consultationFee,1,'COMMA',2,'POINT')}">Rs.</td>
+                            <td th:text="${x.durationMinutes} + ' min'">30 min</td>
+                            <td><span class="badge" th:classappend="${x.active ? 'badge-active' : 'badge-inactive'}" th:text="${x.active ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span></td>
+                            <td><a class="btn btn-secondary btn-sm" th:href="@{/treatments/{id}/edit(id=${x.id})}">Edit</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>
