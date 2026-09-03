@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dentists')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('dentists')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Dentists','Administrative management of clinic dentists.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad">
+                <div class="section-head">
+                    <div><h2>Dentist directory</h2><p>Maintain dentist availability and specialization.</p></div>
+                    <a class="btn btn-primary" th:href="@{/dentists/new}">＋ Add Dentist</a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Name</th><th>Specialization</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="d : ${dentists}">
+                            <td class="table-title" th:text="${d.dentistName}">Dentist</td>
+                            <td th:text="${d.specialization}">Specialization</td>
+                            <td><span class="badge" th:classappend="${d.active ? 'badge-active' : 'badge-inactive'}" th:text="${d.active ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span></td>
+                            <td><a class="btn btn-secondary btn-sm" th:href="@{/dentists/{id}/edit(id=${d.id})}">Edit</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>
