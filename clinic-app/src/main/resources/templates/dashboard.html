@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('dashboard')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Dashboard','A calm overview of today’s clinic activity.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+
+            <section class="hero">
+                <div class="hero-copy">
+                    <div class="hero-eyebrow">Sunrise Dental Clinic</div>
+                    <h2>Smarter care.<br>Brighter smiles.</h2>
+                    <p>Manage patients, appointments, treatments and billing from one clean workspace designed for fast, comfortable clinic service.</p>
+                    <div class="hero-actions">
+                        <a class="btn btn-light" th:href="@{/appointments/new}">Book an Appointment ✦</a>
+                        <a class="btn btn-outline" th:href="@{/patients/new}">Register Patient</a>
+                    </div>
+                </div>
+                <div class="hero-art">
+                    <div class="smile-orbit">S</div>
+                </div>
+            </section>
+
+            <div class="metrics">
+                <div class="metric">
+                    <div class="label">Total Patients</div>
+                    <div class="value" th:text="${totalPatients}">0</div>
+                    <div class="sub">Registered patient profiles</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Today’s Appointments</div>
+                    <div class="value" th:text="${todayAppointments}">0</div>
+                    <div class="sub">Scheduled for today</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Active Dentists</div>
+                    <div class="value" th:text="${activeDentists}">0</div>
+                    <div class="sub">Available in the system</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Today’s Revenue</div>
+                    <div class="value" th:text="'Rs. ' + ${#numbers.formatDecimal(todayRevenue,1,'COMMA',2,'POINT')}">Rs. 0.00</div>
+                    <div class="sub" th:text="${todayCompleted} + ' completed appointment(s)'">0 completed</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Billing Web Service</div>
+                    <div class="value" style="font-size:1.35rem" th:text="${billingServiceOnline ? 'ONLINE' : 'OFFLINE'}">ONLINE</div>
+                    <div class="sub">Distributed service on port 8081</div>
+                </div>
+            </div>
+
+            <div class="card card-pad" style="margin-bottom:18px" th:if="${!#lists.isEmpty(upcomingReminders)}">
+                <div class="section-head">
+                    <div>
+                        <h2>Upcoming appointment alerts</h2>
+                        <p>Scheduled visits due within the next 24 hours.</p>
+                    </div>
+                    <span class="badge" th:text="${#lists.size(upcomingReminders)} + ' reminder(s)'">0 reminders</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Appointment</th><th>Patient</th><th>Contact</th><th>Dentist</th><th>Date & Time</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="a : ${upcomingReminders}">
+                            <td class="table-title" th:text="${a.appointmentNumber}">APP</td>
+                            <td th:text="${a.patient.patientName}">Patient</td>
+                            <td th:text="${a.patient.contactNumber}">Contact</td>
+                            <td th:text="${a.dentist.dentistName}">Dentist</td>
+                            <td><div th:text="${a.appointmentDate}">Date</div><div class="table-sub" th:text="${a.appointmentTime}">Time</div></td>
+                            <td><a class="btn btn-secondary btn-sm" th:href="@{/appointments/{id}(id=${a.id})}">Open</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card card-pad">
+                    <div class="section-head">
+                        <div>
+                            <h2>Recent appointments</h2>
+                            <p>Latest patient bookings and status.</p>
+                        </div>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/appointments}">View all</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Appointment</th><th>Patient</th><th>Dentist</th><th>Date & Time</th><th>Status</th></tr></thead>
+                            <tbody>
+                            <tr th:each="a : ${recentAppointments}">
+                                <td><a class="table-title" th:href="@{/appointments/{id}(id=${a.id})}" th:text="${a.appointmentNumber}">Appointment</a></td>
+                                <td th:text="${a.patient.patientName}">Patient</td>
+                                <td th:text="${a.dentist.dentistName}">Dentist</td>
+                                <td><div th:text="${a.appointmentDate}">Date</div><div class="table-sub" th:text="${a.appointmentTime}">Time</div></td>
+                                <td><span class="badge" th:classappend="${'badge-' + #strings.toLowerCase(a.status.name())}" th:text="${a.status}">STATUS</span></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentAppointments)}"><td colspan="5" class="muted">No appointments yet. Create the first appointment.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card card-pad">
+                    <div class="section-head">
+                        <div>
+                            <h2>Recent billing</h2>
+                            <p>Latest generated receipts.</p>
+                        </div>
+                        <a class="btn btn-secondary btn-sm" th:href="@{/billing}">Billing</a>
+                    </div>
+                    <ul class="list-clean">
+                        <li class="timeline-item" th:each="b : ${recentBills}">
+                            <div class="time-pill" th:text="${#temporals.format(b.createdAt,'dd MMM')}">Date</div>
+                            <div>
+                                <div class="timeline-title" th:text="${b.appointment.patient.patientName}">Patient</div>
+                                <div class="timeline-sub" th:text="${b.billNumber}">Bill</div>
+                            </div>
+                            <strong th:text="'Rs. ' + ${#numbers.formatDecimal(b.totalAmount,1,'COMMA',2,'POINT')}">0.00</strong>
+                        </li>
+                        <li th:if="${#lists.isEmpty(recentBills)}" class="muted small">No bills generated yet.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>
