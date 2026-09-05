@@ -1,0 +1,119 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class UserAccount {
+  - id : Long
+  - fullName : String
+  - username : String
+  - password : String
+  - role : Role
+  - active : boolean
+  + getUsername() : String
+  + getRole() : Role
+  + isActive() : boolean
+}
+class Patient {
+  - id : Long
+  - patientNumber : String
+  - patientName : String
+  - address : String
+  - contactNumber : String
+  - createdAt : LocalDateTime
+  + getPatientNumber() : String
+  + getPatientName() : String
+}
+class Dentist {
+  - id : Long
+  - dentistName : String
+  - specialization : String
+  - active : boolean
+  + getDentistName() : String
+  + isActive() : boolean
+}
+class Treatment {
+  - id : Long
+  - treatmentName : String
+  - treatmentCost : BigDecimal
+  - consultationFee : BigDecimal
+  - durationMinutes : int
+  - active : boolean
+  + getTreatmentCost() : BigDecimal
+  + getConsultationFee() : BigDecimal
+}
+class Appointment {
+  - id : Long
+  - appointmentNumber : String
+  - appointmentDate : LocalDate
+  - appointmentTime : LocalTime
+  - status : AppointmentStatus
+  - notes : String
+  + getAppointmentNumber() : String
+  + getStatus() : AppointmentStatus
+}
+class Bill {
+  - id : Long
+  - billNumber : String
+  - treatmentCost : BigDecimal
+  - consultationFee : BigDecimal
+  - totalAmount : BigDecimal
+  + getTotalAmount() : BigDecimal
+}
+class AuditLog {
+  - id : Long
+  - username : String
+  - actionType : String
+  - description : String
+  - createdAt : LocalDateTime
+}
+
+class AppointmentController {
+  + list(q, model) : String
+  + save(form, result, model) : String
+  + details(id, model) : String
+}
+class AppointmentService {
+  + save(form) : Appointment
+  + findByNumber(number) : Appointment
+  + setStatus(id, status) : void
+  - ensureDentistHasNoOverlap(...) : void
+}
+interface AppointmentRepository
+class BillService {
+  + generateForAppointment(id) : Bill
+}
+class BillingClient {
+  + calculate(treatment, consultation) : BillingQuoteResponse
+  + isAvailable() : boolean
+}
+class ReportService {
+  + metrics(from, to) : ReportMetrics
+  + dailySummary(from, to) : List
+  + appointmentRowsForExport(from, to) : List
+}
+class AdvancedDatabaseFeatureService {
+  + dailySummary(from, to) : List
+  + appointmentsBetweenUsingProcedure(from, to) : List
+  + calculateTotalUsingFunction(...) : Optional
+}
+interface BillingStrategy {
+  + calculateTotal(treatment, consultation) : BigDecimal
+}
+class StandardBillingStrategy
+
+Patient "1" <-- "0..*" Appointment : patient
+Dentist "1" <-- "0..*" Appointment : dentist
+Treatment "1" <-- "0..*" Appointment : treatment
+Appointment "1" *-- "0..1" Bill : bill
+UserAccount "0..1" ..> AuditLog : creates actions
+
+AppointmentController --> AppointmentService
+AppointmentService --> AppointmentRepository
+AppointmentService --> Patient
+AppointmentService --> Dentist
+AppointmentService --> Treatment
+BillService --> AppointmentService
+BillService --> BillingClient
+BillService --> AdvancedDatabaseFeatureService
+ReportService --> AdvancedDatabaseFeatureService
+BillingStrategy <|.. StandardBillingStrategy
+@enduml

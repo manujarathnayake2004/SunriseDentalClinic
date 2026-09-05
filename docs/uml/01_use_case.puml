@@ -1,0 +1,63 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor "Authorized Staff" as Staff
+actor Administrator as Admin
+actor Receptionist as Reception
+actor "Billing REST Service" as BillingAPI
+
+Admin --|> Staff
+Reception --|> Staff
+
+rectangle "Sunrise Dental Clinic Management System" {
+  usecase "Login" as UCLogin
+  usecase "Register / Maintain Patient" as UCPatient
+  usecase "Register Appointment" as UCAppointment
+  usecase "Validate Date, Time & Duration" as UCValidate
+  usecase "Check Dentist Overlap" as UCSlot
+  usecase "Search Appointment" as UCSearch
+  usecase "Display Complete Appointment" as UCDetails
+  usecase "Update Appointment Status" as UCStatus
+  usecase "Calculate Bill" as UCBill
+  usecase "Call Billing Web Service" as UCWeb
+  usecase "Verify Total with DB Function" as UCVerify
+  usecase "Print Receipt" as UCPrint
+  usecase "View Decision Reports" as UCReports
+  usecase "Export Appointment CSV" as UCExport
+  usecase "View Upcoming Alerts" as UCAlerts
+  usecase "View Help" as UCHelp
+  usecase "Exit / Secure Logout" as UCLogout
+  usecase "Manage Dentists" as UCDentists
+  usecase "Manage Treatments & Fees" as UCTreatments
+  usecase "Manage Staff Users" as UCUsers
+  usecase "View Audit Log" as UCAudit
+}
+
+Staff --> UCLogin
+Staff --> UCPatient
+Staff --> UCAppointment
+Staff --> UCSearch
+Staff --> UCDetails
+Staff --> UCStatus
+Staff --> UCBill
+Staff --> UCPrint
+Staff --> UCReports
+Staff --> UCExport
+Staff --> UCAlerts
+Staff --> UCHelp
+Staff --> UCLogout
+
+Admin --> UCDentists
+Admin --> UCTreatments
+Admin --> UCUsers
+Admin --> UCAudit
+
+UCAppointment .> UCValidate : <<include>>
+UCAppointment .> UCSlot : <<include>>
+UCBill .> UCWeb : <<include>>
+UCBill .> UCVerify : <<include>>
+UCPrint .> UCBill : <<extend>>
+UCDetails .> UCSearch : <<extend>>
+UCExport .> UCReports : <<extend>>
+BillingAPI --> UCWeb
+@enduml

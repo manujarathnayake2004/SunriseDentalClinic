@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Dentist Form')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('dentists')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Dentist Details','Configure dentist information and availability.')}"></header>
+        <section class="content">
+            <div class="card card-pad form-card">
+                <div class="section-head"><div><h2 th:text="${dentist.id == null ? 'Add dentist' : 'Edit dentist'}">Dentist</h2><p>Admin-only clinic configuration.</p></div></div>
+                <div class="flash flash-error" th:if="${businessError}" th:text="${businessError}"></div>
+                <form th:action="@{/dentists/save}" th:object="${dentist}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Dentist Name</label>
+                            <input class="input" th:field="*{dentistName}" placeholder="Enter dentist name">
+                            <div class="field-error" th:errors="*{dentistName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Specialization</label>
+                            <input class="input" th:field="*{specialization}" placeholder="Enter specialization">
+                            <div class="field-error" th:errors="*{specialization}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="input" th:field="*{active}">
+                                <option th:value="true">Active</option>
+                                <option th:value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Save Dentist</button>
+                        <a class="btn btn-secondary" th:href="@{/dentists}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

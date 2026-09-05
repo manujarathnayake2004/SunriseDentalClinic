@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Audit Log')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('audit')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Audit Log','Recent security and data-change activity.')}"></header>
+        <section class="content">
+            <div class="card card-pad">
+                <div class="section-head"><div><h2>System activity</h2><p>Latest 200 tracked business actions.</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Date & Time</th><th>User</th><th>Action</th><th>Description</th></tr></thead>
+                        <tbody>
+                        <tr th:each="l : ${logs}">
+                            <td th:text="${#temporals.format(l.createdAt,'yyyy-MM-dd HH:mm:ss')}">Date</td>
+                            <td th:text="${l.username ?: 'SYSTEM'}">User</td>
+                            <td><span class="badge badge-scheduled" th:text="${l.actionType}">ACTION</span></td>
+                            <td th:text="${l.description}">Description</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(logs)}"><td colspan="4" class="muted">No activity has been recorded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

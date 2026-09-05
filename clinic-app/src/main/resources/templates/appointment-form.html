@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Appointment Form')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('appointments')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Appointment Booking','Create a valid clinic booking without double-booking the dentist.')}"></header>
+        <section class="content">
+            <div class="card card-pad form-card">
+                <div class="section-head">
+                    <div><h2 th:text="${appointmentForm.id == null ? 'Register new appointment' : 'Edit appointment'}">Appointment</h2><p>Appointments start from 08:00–17:30 in 15-minute intervals. Treatment duration is checked to prevent overlapping dentist bookings.</p></div>
+                </div>
+                <div class="flash flash-error" th:if="${businessError}" th:text="${businessError}"></div>
+
+                <form th:action="@{/appointments/save}" th:object="${appointmentForm}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Patient</label>
+                            <select class="input" th:field="*{patientId}">
+                                <option value="">Select patient</option>
+                                <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.patientNumber + ' — ' + p.patientName}"></option>
+                            </select>
+                            <div class="field-error" th:errors="*{patientId}"></div>
+                            <div class="small muted">Patient not registered? <a class="gold" th:href="@{/patients/new}">Add a patient first.</a></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Dentist</label>
+                            <select class="input" th:field="*{dentistId}">
+                                <option value="">Select dentist</option>
+                                <option th:each="d : ${dentists}" th:value="${d.id}" th:text="${d.dentistName + ' — ' + d.specialization}"></option>
+                            </select>
+                            <div class="field-error" th:errors="*{dentistId}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Treatment</label>
+                            <select class="input" th:field="*{treatmentId}">
+                                <option value="">Select treatment</option>
+                                <option th:each="x : ${treatments}" th:value="${x.id}" th:text="${x.treatmentName + ' — Rs. ' + #numbers.formatDecimal(x.treatmentCost,1,'COMMA',2,'POINT')}"></option>
+                            </select>
+                            <div class="field-error" th:errors="*{treatmentId}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Appointment Date</label>
+                            <input class="input" type="date" th:field="*{appointmentDate}">
+                            <div class="field-error" th:errors="*{appointmentDate}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Appointment Time</label>
+                            <input class="input" type="time" min="08:00" max="17:30" step="900" th:field="*{appointmentTime}">
+                            <div class="field-error" th:errors="*{appointmentTime}"></div>
+                        </div>
+                        <div class="form-group full">
+                            <label>Notes</label>
+                            <textarea class="input" th:field="*{notes}" placeholder="Optional clinical/front desk note"></textarea>
+                            <div class="field-error" th:errors="*{notes}"></div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Save Appointment</button>
+                        <a class="btn btn-secondary" th:href="@{/appointments}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

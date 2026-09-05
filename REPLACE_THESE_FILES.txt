@@ -1,0 +1,44 @@
+SUNRISE DENTAL CLINIC - CHANGED FILES ONLY
+==========================================
+
+This package is a patch for the uploaded SunriseDentalClinic (2) project.
+Copy its CONTENTS into the existing SunriseDentalClinic root folder and choose
+"Replace the files in the destination" when Windows asks.
+
+IMPORTANT AFTER COPYING
+1. Stop ClinicApplication and BillingServiceApplication.
+2. Delete these old generated folders if they exist:
+   - clinic-app\target
+   - billing-service\target
+3. In IntelliJ, reload the Maven project.
+4. Start BillingServiceApplication (8081), then ClinicApplication (8080).
+5. Hard-refresh the browser with Ctrl+Shift+R.
+
+NO DEMO DATA
+- DataInitializer no longer creates demo users, dentists or treatments.
+- The login page no longer displays demo credentials.
+- A new empty database redirects to /setup to create your own first ADMIN.
+- ADMIN can then add genuine dentists, treatments/prices and receptionist users.
+- Public CUSTOMER registration is intentionally not provided because the assessment brief states that only authorized staff can use the system.
+
+EXISTING DATABASE NOTE
+Source changes cannot remove records already stored in MySQL/XAMPP.
+If you previously ran a version that inserted demo records, review and run:
+  database\03_remove_legacy_demo_records.sql
+or use a fresh sunrise_dental database for the final submission.
+
+ASSIGNMENT ALIGNMENT
+- Authorized staff login and secure logout/session handling
+- Patient registration
+- Unique appointment numbers and appointment search
+- Complete appointment details
+- Double-booking and past-time validation
+- Treatment + consultation billing through separate REST web service
+- Printable receipt
+- Help guide
+- Reports
+- MVC/service/repository + Strategy design pattern
+- MySQL/XAMPP database + advanced SQL script
+- Automated JUnit/Mockito tests
+- GitHub Actions CI and release workflow
+- UML source and assessment evidence documentation

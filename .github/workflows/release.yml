@@ -1,0 +1,39 @@
+name: Package Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  test-package-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run automated tests
+        run: mvn -B clean test
+
+      - name: Package applications
+        run: mvn -B package -DskipTests
+
+      - name: Create GitHub release with runnable JARs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            clinic-app/target/*.jar \
+            billing-service/target/*.jar \
+            --generate-notes \
+            --title "Sunrise Dental Clinic $GITHUB_REF_NAME"

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('System Message')}"></head>
+<body class="login-page">
+<section class="login-visual">
+    <div class="login-brand">
+        <div class="tooth-mark">S</div>
+        <div><div class="serif upper" style="font-size:1.1rem">SUNRISE DENTAL CLINIC</div><div style="font-size:.72rem;letter-spacing:.16em;color:rgba(255,255,255,.65);margin-top:4px">SAFE SYSTEM RECOVERY</div></div>
+    </div>
+    <div class="login-copy"><div class="eyebrow">Clear • secure • recoverable</div><h1>We could not<br>complete that request.</h1><p>The system has protected the current data and provided a clear message so staff can continue safely.</p></div>
+</section>
+<section class="login-card-wrap">
+    <div class="login-card">
+        <div class="mini-logo"><div class="logo-main">SUNRISE</div><div class="logo-sub">Dental Clinic • Colombo</div></div>
+        <div class="eyebrow" th:text="${statusCode != null ? 'Error ' + statusCode : 'System message'}">Error</div>
+        <h2 th:text="${errorTitle != null ? errorTitle : 'Request could not be completed'}">Request could not be completed</h2>
+        <p class="intro" th:text="${errorMessage != null ? errorMessage : 'Please try again.'}">Please try again.</p>
+        <a class="btn btn-primary" style="width:100%;margin-top:12px" th:href="@{/}">Return safely</a>
+    </div>
+</section>
+</body>
+</html>

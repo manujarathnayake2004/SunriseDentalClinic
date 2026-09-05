@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Reports')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('reports')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Reports','Operational appointment and revenue information for decision-making.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad" style="margin-bottom:18px">
+                <form class="searchbar" th:action="@{/reports}" method="get">
+                    <div class="form-group">
+                        <label>From</label>
+                        <input class="input" type="date" name="from" th:value="${from}">
+                    </div>
+                    <div class="form-group">
+                        <label>To</label>
+                        <input class="input" type="date" name="to" th:value="${to}">
+                    </div>
+                    <button class="btn btn-primary" type="submit" style="margin-top:22px">Generate Report</button>
+                    <a class="btn btn-secondary" style="margin-top:22px" th:href="@{/reports/appointments.csv(from=${from},to=${to})}">Export Appointments CSV</a>
+                </form>
+            </div>
+
+            <div class="report-summary">
+                <div class="report-box"><span>Appointments</span><strong th:text="${metrics.totalAppointments}">0</strong></div>
+                <div class="report-box"><span>Completed</span><strong th:text="${metrics.completed}">0</strong></div>
+                <div class="report-box"><span>Cancelled</span><strong th:text="${metrics.cancelled}">0</strong></div>
+                <div class="report-box"><span>Completion Rate</span><strong th:text="${metrics.completionRate} + '%'">0%</strong></div>
+                <div class="report-box"><span>Bills Generated</span><strong th:text="${#lists.size(bills)}">0</strong></div>
+                <div class="report-box"><span>Total Revenue</span><strong th:text="'Rs. ' + ${#numbers.formatDecimal(revenue,1,'COMMA',2,'POINT')}">0</strong></div>
+            </div>
+
+            <div class="card card-pad" style="margin-bottom:18px" th:if="${!#lists.isEmpty(dailySummary)}">
+                <div class="section-head"><div><h2>Daily database summary</h2><p>Generated from the MySQL/MariaDB reporting view <code>vw_daily_appointment_summary</code>.</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Date</th><th>Total</th><th>Completed</th><th>Cancelled</th></tr></thead>
+                        <tbody>
+                        <tr th:each="d : ${dailySummary}">
+                            <td th:text="${d.date}">Date</td>
+                            <td th:text="${d.total}">0</td>
+                            <td th:text="${d.completed}">0</td>
+                            <td th:text="${d.cancelled}">0</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card card-pad" style="margin-bottom:18px">
+                <div class="section-head"><div><h2>Appointment report</h2><p th:text="${from + ' to ' + to}">Range</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Date</th><th>Time</th><th>Appointment</th><th>Patient</th><th>Dentist</th><th>Treatment</th><th>Status</th></tr></thead>
+                        <tbody>
+                        <tr th:each="a : ${appointments}">
+                            <td th:text="${a.appointmentDate}">Date</td>
+                            <td th:text="${a.appointmentTime}">Time</td>
+                            <td class="table-title" th:text="${a.appointmentNumber}">APP</td>
+                            <td th:text="${a.patient.patientName}">Patient</td>
+                            <td th:text="${a.dentist.dentistName}">Dentist</td>
+                            <td th:text="${a.treatment.treatmentName}">Treatment</td>
+                            <td><span class="badge" th:classappend="${'badge-' + #strings.toLowerCase(a.status.name())}" th:text="${a.status}">Status</span></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(appointments)}"><td colspan="7" class="muted">No appointments in this date range.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card card-pad" style="margin-bottom:18px">
+                <div class="section-head"><div><h2>Dentist workload report</h2><p>Appointment volume, completions and cancellations by dentist.</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Dentist</th><th>Total Appointments</th><th>Completed</th><th>Cancelled</th></tr></thead>
+                        <tbody>
+                        <tr th:each="w : ${workload}">
+                            <td class="table-title" th:text="${w.dentistName}">Dentist</td>
+                            <td th:text="${w.totalAppointments}">0</td>
+                            <td th:text="${w.completed}">0</td>
+                            <td th:text="${w.cancelled}">0</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(workload)}"><td colspan="4" class="muted">No dentist activity in this date range.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card card-pad">
+                <div class="section-head"><div><h2>Revenue report</h2><p>Generated treatment bills within the selected period.</p></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Date</th><th>Bill</th><th>Patient</th><th>Treatment Fee</th><th>Consultation</th><th>Total</th></tr></thead>
+                        <tbody>
+                        <tr th:each="b : ${bills}">
+                            <td th:text="${#temporals.format(b.createdAt,'yyyy-MM-dd')}">Date</td>
+                            <td class="table-title" th:text="${b.billNumber}">BILL</td>
+                            <td th:text="${b.appointment.patient.patientName}">Patient</td>
+                            <td th:text="'Rs. ' + ${#numbers.formatDecimal(b.treatmentCost,1,'COMMA',2,'POINT')}">0</td>
+                            <td th:text="'Rs. ' + ${#numbers.formatDecimal(b.consultationFee,1,'COMMA',2,'POINT')}">0</td>
+                            <td><strong th:text="'Rs. ' + ${#numbers.formatDecimal(b.totalAmount,1,'COMMA',2,'POINT')}">0</strong></td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(bills)}"><td colspan="6" class="muted">No bills in this date range.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

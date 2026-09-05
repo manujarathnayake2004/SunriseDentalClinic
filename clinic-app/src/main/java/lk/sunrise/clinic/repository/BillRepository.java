@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface BillRepository extends JpaRepository<Bill, Long> {
     Optional<Bill> findByAppointment(Appointment appointment);
-    List<Bill> findTop8ByOrderByCreatedAtDesc();
+    List<Bill> findTop15ByOrderByCreatedAtDesc();
     List<Bill> findByCreatedAtBetweenOrderByCreatedAtAsc(LocalDateTime from, LocalDateTime to);
 
     @Query("select max(b.billNumber) from Bill b")

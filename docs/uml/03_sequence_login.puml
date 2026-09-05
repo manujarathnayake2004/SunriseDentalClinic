@@ -1,0 +1,25 @@
+@startuml
+actor Staff
+boundary "Login Page" as UI
+control "Spring Security" as Security
+control "UserDetailsService" as UDS
+entity "UserAccountRepository" as Repo
+database "MySQL" as DB
+
+Staff -> UI : enter username/password
+UI -> Security : POST /login
+Security -> UDS : loadUserByUsername(username)
+UDS -> Repo : findByUsername(username)
+Repo -> DB : SELECT authorized user
+DB --> Repo : user record
+Repo --> UDS : UserAccount
+UDS --> Security : UserDetails + BCrypt hash
+Security -> Security : verify password and active role
+alt valid credentials
+  Security --> UI : authenticated session
+  UI --> Staff : redirect /dashboard
+else invalid credentials
+  Security --> UI : redirect /login?error
+  UI --> Staff : show error message
+end
+@enduml

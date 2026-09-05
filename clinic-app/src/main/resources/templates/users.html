@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Staff Users')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('users')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Staff Users','Control authorized access to the clinic system.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad">
+                <div class="section-head">
+                    <div><h2>Authorized users</h2><p>Passwords are stored as BCrypt hashes.</p></div>
+                    <a class="btn btn-primary" th:href="@{/admin/users/new}">＋ Add Staff User</a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+                        <tbody>
+                        <tr th:each="u : ${users}">
+                            <td class="table-title" th:text="${u.fullName}">Name</td>
+                            <td th:text="${u.username}">username</td>
+                            <td><span class="badge badge-scheduled" th:text="${u.role}">ROLE</span></td>
+                            <td><span class="badge" th:classappend="${u.active ? 'badge-active' : 'badge-inactive'}" th:text="${u.active ? 'ACTIVE' : 'INACTIVE'}">ACTIVE</span></td>
+                            <td><a class="btn btn-secondary btn-sm" th:href="@{/admin/users/{id}/edit(id=${u.id})}">Edit</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

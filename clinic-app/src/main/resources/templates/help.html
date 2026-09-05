@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Help Guide')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('help')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Help Guide','Step-by-step guidance for authorized clinic staff.')}" ></header>
+        <section class="content">
+            <div class="card card-pad">
+                <div class="section-head"><div><h2>Using the system</h2><p>Follow these steps when setting up and operating Sunrise Dental Clinic.</p></div></div>
+                <div class="help-grid">
+                    <div class="card help-card"><div class="help-step">1</div><h3>Initial setup</h3><p>On a new database, create the first administrator account. No default usernames or passwords are provided.</p></div>
+                    <div class="card help-card"><div class="help-step">2</div><h3>Configure clinic data</h3><p>An administrator adds dentists, treatment types, treatment fees, consultation fees and service durations before appointments are created.</p></div>
+                    <div class="card help-card"><div class="help-step">3</div><h3>Sign in</h3><p>Use an authorized staff username and password. Administrators can create additional Admin or Receptionist accounts.</p></div>
+                    <div class="card help-card"><div class="help-step">4</div><h3>Register patient</h3><p>Open Patients, select Add Patient and enter the patient name, address and valid contact number.</p></div>
+                    <div class="card help-card"><div class="help-step">5</div><h3>Create appointment</h3><p>Select the patient, dentist, treatment, date and time. The system blocks past times, invalid 15-minute intervals, treatments that would finish after closing, and any dentist booking that overlaps another treatment duration.</p></div>
+                    <div class="card help-card"><div class="help-step">6</div><h3>Search appointment</h3><p>Use the Appointments search box with the unique appointment number, patient name or dentist name to display appointment details.</p></div>
+                    <div class="card help-card"><div class="help-step">7</div><h3>Complete treatment</h3><p>Open Appointment Details and mark the scheduled appointment as Completed after the treatment is finished.</p></div>
+                    <div class="card help-card"><div class="help-step">8</div><h3>Generate bill</h3><p>Open Billing or a completed appointment. The separate billing web service calculates treatment fee plus consultation fee.</p></div>
+                    <div class="card help-card"><div class="help-step">9</div><h3>Print receipt and reports</h3><p>Print the patient receipt, then use Reports to review appointment activity, completion rate, dentist workload and revenue. Appointment reports can also be exported as CSV.</p></div>
+                    <div class="card help-card"><div class="help-step">10</div><h3>Secure logout</h3><p>Use Exit System / Secure Logout when finishing work. The authenticated session is invalidated, authentication is cleared and the session cookie is removed before returning to login.</p></div>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

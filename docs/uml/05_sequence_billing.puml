@@ -1,0 +1,38 @@
+@startuml
+actor Staff
+boundary "Billing / Appointment Page" as UI
+control "BillingController" as Controller
+control "BillService" as BillService
+control "BillingClient" as Client
+control "Billing REST Service :8081" as API
+control "BillingCalculationService" as Calc
+control "AdvancedDatabaseFeatureService" as DBFeature
+entity "BillRepository" as Repo
+database "MySQL/MariaDB" as DB
+
+Staff -> UI : Generate bill for completed appointment
+UI -> Controller : POST /billing/generate/{id}
+Controller -> BillService : generateForAppointment(id)
+BillService -> BillService : verify COMPLETED and not already billed
+BillService -> Client : calculate(treatmentFee, consultationFee)
+Client -> API : POST /api/billing/calculate
+API -> Calc : Strategy.calculateTotal(...)
+Calc --> API : total
+API --> Client : BillingQuoteResponse
+Client --> BillService : quote
+BillService -> DBFeature : fn_bill_total(treatment, consultation)
+DBFeature -> DB : SELECT fn_bill_total(...)
+DB --> DBFeature : verification total
+DBFeature --> BillService : Optional<BigDecimal>
+BillService -> BillService : compare REST and DB totals
+alt totals valid
+  BillService -> Repo : save unique Bill
+  Repo -> DB : INSERT bill
+  DB --> Repo : saved bill
+  BillService --> Controller : Bill
+  Controller --> UI : printable receipt
+else mismatch/service error
+  BillService --> Controller : BusinessException
+  Controller --> UI : clear error message
+end
+@enduml

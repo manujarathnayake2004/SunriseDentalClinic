@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Appointment Details')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('appointments')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Appointment Details','Complete patient and appointment information.')}" ></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="card card-pad form-card">
+                <div class="section-head">
+                    <div>
+                        <h2 th:text="${appointment.appointmentNumber}">Appointment number</h2>
+                        <p>Unique appointment record for Sunrise Dental Clinic.</p>
+                    </div>
+                    <span class="badge" th:classappend="${'badge-' + #strings.toLowerCase(appointment.status.name())}" th:text="${appointment.status}">STATUS</span>
+                </div>
+
+                <div class="report-summary">
+                    <div class="report-box"><span>Patient</span><strong th:text="${appointment.patient.patientName}">Patient</strong></div>
+                    <div class="report-box"><span>Dentist</span><strong th:text="${appointment.dentist.dentistName}">Dentist</strong></div>
+                    <div class="report-box"><span>Treatment</span><strong th:text="${appointment.treatment.treatmentName}">Treatment</strong></div>
+                </div>
+
+                <div class="receipt-line"><span>Patient Number</span><strong th:text="${appointment.patient.patientNumber}">Patient number</strong></div>
+                <div class="receipt-line"><span>Address</span><strong th:text="${appointment.patient.address}">Address</strong></div>
+                <div class="receipt-line"><span>Contact Number</span><strong th:text="${appointment.patient.contactNumber}">Contact number</strong></div>
+                <div class="receipt-line"><span>Appointment Date</span><strong th:text="${appointment.appointmentDate}">Date</strong></div>
+                <div class="receipt-line"><span>Appointment Time</span><strong th:text="${appointment.appointmentTime}">Time</strong></div>
+                <div class="receipt-line"><span>Notes</span><strong th:text="${appointment.notes == null || appointment.notes.isBlank() ? '—' : appointment.notes}">Notes</strong></div>
+
+                <div class="form-actions">
+                    <a class="btn btn-secondary" th:if="${appointment.status.name() == 'SCHEDULED'}" th:href="@{/appointments/{id}/edit(id=${appointment.id})}">Edit</a>
+                    <form th:if="${appointment.status.name() == 'SCHEDULED'}" th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" style="display:inline">
+                        <input type="hidden" name="status" value="COMPLETED">
+                        <button class="btn btn-primary" type="submit">Mark Completed</button>
+                    </form>
+                    <form th:if="${appointment.status.name() == 'SCHEDULED'}" th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" style="display:inline">
+                        <input type="hidden" name="status" value="CANCELLED">
+                        <button class="btn btn-danger" type="submit">Cancel Appointment</button>
+                    </form>
+                    <form th:if="${appointment.status.name() == 'COMPLETED'}" th:action="@{/billing/generate/{id}(id=${appointment.id})}" method="post" style="display:inline">
+                        <button class="btn btn-gold" type="submit">Generate Bill</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

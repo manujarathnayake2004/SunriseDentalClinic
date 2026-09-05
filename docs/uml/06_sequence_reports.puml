@@ -1,0 +1,30 @@
+@startuml
+actor Staff
+boundary "Reports Page" as UI
+control "ReportController" as Controller
+control "ReportService" as Service
+control "AdvancedDatabaseFeatureService" as DBFeature
+database "MySQL/MariaDB" as DB
+
+Staff -> UI : choose From / To dates
+UI -> Controller : GET /reports?from&to
+Controller -> Service : metrics/revenue/workload(...)
+Service -> DBFeature : dailySummary(from,to)
+DBFeature -> DB : SELECT vw_daily_appointment_summary
+DB --> DBFeature : daily rows
+DBFeature --> Service : summary
+Service --> Controller : report model
+Controller --> UI : display decision-support report
+
+opt Export CSV
+  Staff -> UI : Export Appointments CSV
+  UI -> Controller : GET /reports/appointments.csv
+  Controller -> Service : appointmentRowsForExport(...)
+  Service -> DBFeature : CALL sp_appointments_between_dates
+  DBFeature -> DB : stored procedure
+  DB --> DBFeature : report rows
+  DBFeature --> Service : rows
+  Service --> Controller : rows
+  Controller --> Staff : CSV download
+end
+@enduml

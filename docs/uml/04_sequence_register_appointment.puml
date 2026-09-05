@@ -1,0 +1,32 @@
+@startuml
+actor Staff
+boundary "Appointment Form" as UI
+control "AppointmentController" as Controller
+control "AppointmentService" as Service
+entity "Patient/Dentist/Treatment Services" as Lookup
+entity "AppointmentRepository" as Repo
+database "MySQL/MariaDB" as DB
+
+Staff -> UI : enter patient, dentist, treatment, date/time
+UI -> Controller : POST /appointments/save
+Controller -> Service : save(form)
+Service -> Lookup : load selected records
+Lookup --> Service : patient + dentist + treatment
+Service -> Service : validate future time, 15-min interval,
+clinic hours and treatment finish time
+Service -> Repo : active appointments for dentist/date
+Repo -> DB : SELECT active bookings
+DB --> Repo : existing appointments
+Repo --> Service : list
+Service -> Service : compare start/end using treatment durations
+alt no overlap
+  Service -> Repo : save unique appointment number
+  Repo -> DB : INSERT appointment
+  DB --> Repo : saved record
+  Service --> Controller : Appointment
+  Controller --> UI : redirect to complete details
+else overlap / invalid
+  Service --> Controller : BusinessException
+  Controller --> UI : clear validation message
+end
+@enduml

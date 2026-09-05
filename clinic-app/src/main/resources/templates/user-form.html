@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Staff User Form')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('users')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Staff Access','Create or update an authorized staff account.')}"></header>
+        <section class="content">
+            <div class="card card-pad form-card">
+                <div class="section-head"><div><h2 th:text="${userForm.id == null ? 'Add staff user' : 'Edit staff user'}">User</h2><p>Admin-only security management.</p></div></div>
+                <div class="flash flash-error" th:if="${businessError}" th:text="${businessError}"></div>
+                <form th:action="@{/admin/users/save}" th:object="${userForm}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input class="input" th:field="*{fullName}" placeholder="Staff member name">
+                            <div class="field-error" th:errors="*{fullName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input class="input" th:field="*{username}" placeholder="username">
+                            <div class="field-error" th:errors="*{username}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input class="input" type="password" th:field="*{password}" placeholder="At least 8 characters">
+                            <div class="small muted" th:text="${userForm.id == null ? 'Required for a new user.' : 'Leave blank to keep the current password.'}"></div>
+                            <div class="field-error" th:errors="*{password}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select class="input" th:field="*{role}">
+                                <option value="">Select role</option>
+                                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                            </select>
+                            <div class="field-error" th:errors="*{role}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="input" th:field="*{active}">
+                                <option th:value="true">Active</option>
+                                <option th:value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Save Staff User</button>
+                        <a class="btn btn-secondary" th:href="@{/admin/users}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

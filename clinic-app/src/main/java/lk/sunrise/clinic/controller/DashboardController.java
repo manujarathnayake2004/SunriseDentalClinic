@@ -44,8 +44,8 @@ public class DashboardController {
         model.addAttribute("todayAppointments", appointments.countByAppointmentDate(today));
         model.addAttribute("todayCompleted", appointments.countByAppointmentDateAndStatus(today, AppointmentStatus.COMPLETED));
         model.addAttribute("todayRevenue", todayRevenue);
-        model.addAttribute("recentAppointments", appointments.findTop8ByOrderByCreatedAtDesc());
-        model.addAttribute("recentBills", bills.findTop8ByOrderByCreatedAtDesc());
+        model.addAttribute("recentAppointments", appointments.findTop15ByOrderByCreatedAtDesc());
+        model.addAttribute("recentBills", bills.findTop15ByOrderByCreatedAtDesc());
         model.addAttribute("upcomingReminders", reminderService.upcomingWithinHours(24));
         model.addAttribute("billingServiceOnline", billingClient.isAvailable());
         return "dashboard";

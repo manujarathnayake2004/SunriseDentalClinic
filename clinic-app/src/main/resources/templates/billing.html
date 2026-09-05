@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Billing')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('billing')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Billing & Receipts','Calculate treatment totals through the billing web service.')}"></header>
+        <section class="content">
+            <div th:replace="~{fragments :: flash}"></div>
+            <div class="dashboard-grid">
+                <div class="card card-pad">
+                    <div class="section-head"><div><h2>Generated bills</h2><p>Each appointment can have one bill.</p></div></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Bill No.</th><th>Appointment</th><th>Patient</th><th>Total</th><th>Created</th><th>Action</th></tr></thead>
+                            <tbody>
+                            <tr th:each="b : ${bills}">
+                                <td class="table-title" th:text="${b.billNumber}">BILL</td>
+                                <td th:text="${b.appointment.appointmentNumber}">APP</td>
+                                <td th:text="${b.appointment.patient.patientName}">Patient</td>
+                                <td th:text="'Rs. ' + ${#numbers.formatDecimal(b.totalAmount,1,'COMMA',2,'POINT')}">Total</td>
+                                <td th:text="${#temporals.format(b.createdAt,'yyyy-MM-dd HH:mm')}">Date</td>
+                                <td><a class="btn btn-secondary btn-sm" th:href="@{/billing/{id}(id=${b.id})}">Receipt</a></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(bills)}"><td colspan="6" class="muted">No bills have been generated.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card card-pad">
+                    <div class="section-head"><div><h2>Generate bill</h2><p>Only completed, unbilled appointments are available here.</p></div></div>
+                    <div style="display:flex;flex-direction:column;gap:10px;max-height:520px;overflow:auto">
+                        <div th:each="a : ${appointments}" style="padding:13px;border:1px solid #e6ded3;border-radius:13px;background:#fffdf9">
+                            <div class="table-title" th:text="${a.appointmentNumber + ' — ' + a.patient.patientName}">APP</div>
+                            <div class="table-sub" th:text="${a.treatment.treatmentName + ' • ' + a.appointmentDate + ' ' + a.appointmentTime}">Treatment</div>
+                            <form th:action="@{/billing/generate/{id}(id=${a.id})}" method="post" style="margin-top:10px">
+                                <button class="btn btn-primary btn-sm" type="submit">Calculate & Generate</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>

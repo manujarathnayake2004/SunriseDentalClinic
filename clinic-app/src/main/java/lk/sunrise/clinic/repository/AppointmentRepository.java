@@ -27,7 +27,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     long countByAppointmentDate(LocalDate date);
     long countByAppointmentDateAndStatus(LocalDate date, AppointmentStatus status);
 
-    List<Appointment> findTop8ByOrderByCreatedAtDesc();
+    List<Appointment> findTop15ByOrderByCreatedAtDesc();
     List<Appointment> findByAppointmentDateOrderByAppointmentTimeAsc(LocalDate date);
     List<Appointment> findByAppointmentDateBetweenOrderByAppointmentDateAscAppointmentTimeAsc(LocalDate from, LocalDate to);
 

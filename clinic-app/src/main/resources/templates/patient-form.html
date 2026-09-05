@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Patient Form')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments :: sidebar('patients')}"></aside>
+    <main class="main">
+        <header th:replace="~{fragments :: topbar('Patient Details','Create or update a patient profile.')}"></header>
+        <section class="content">
+            <div class="card card-pad form-card">
+                <div class="section-head">
+                    <div><h2 th:text="${patient.id == null ? 'Register new patient' : 'Edit patient'}">Patient</h2><p>All required fields are validated before saving.</p></div>
+                </div>
+                <form th:action="@{/patients/save}" th:object="${patient}" method="post">
+                    <input type="hidden" th:field="*{id}">
+                    <div class="form-grid">
+                        <div class="form-group full" th:if="${patient.patientNumber != null}">
+                            <label>Patient Number</label>
+                            <input class="input" th:value="${patient.patientNumber}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Patient Name</label>
+                            <input class="input" th:field="*{patientName}" placeholder="Enter patient name">
+                            <div class="field-error" th:errors="*{patientName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input class="input" th:field="*{contactNumber}" placeholder="Enter contact number">
+                            <div class="field-error" th:errors="*{contactNumber}"></div>
+                        </div>
+                        <div class="form-group full">
+                            <label>Address</label>
+                            <textarea class="input" th:field="*{address}" placeholder="Patient address"></textarea>
+                            <div class="field-error" th:errors="*{address}"></div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">Save Patient</button>
+                        <a class="btn btn-secondary" th:href="@{/patients}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <footer th:replace="~{fragments :: footer}"></footer>
+    </main>
+</div>
+</body>
+</html>
